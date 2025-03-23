@@ -209,5 +209,6 @@ ENV/
 
 # mkdocs documentation
 /site
-
+static
+static/
 # End of https://www.gitignore.io/api/macos,linux,django,python,pycharm
