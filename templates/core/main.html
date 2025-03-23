@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Clarkie</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background-color: #C8102E; /* Clark University red color */
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .logo {
+      width: 150px;
+      height: 150px;
+      background-color: white;
+      border-radius: 50%;
+      padding: 10px;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .login-options {
+      font-size: 1.5rem;
+    }
+
+    .login-options a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: opacity 0.3s ease;
+    }
+
+    .login-options a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    .separator {
+      display: inline-block;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <img style="height: 200px; width: 200px" src="{% static 'core/logo.png' %}" alt="Clark University Logo" class="logo">
+  <h1 style="color: black; margin-bottom: 3px">Welcome to Clarkie</h1>
+  <p>Ask Clarkie, live like a Clarkie</p><br><br>
+  <div class="login-options">
+    <a href="{% url 'user_login' %}">Login</a>
+    <span class="separator">|</span>
+    <a href="{% url 'user_signup' %}">Sign up</a>
+  </div>
+</body>
+</html>
