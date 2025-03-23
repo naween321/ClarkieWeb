@@ -108,6 +108,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = "main"
 LOGIN_REDIRECT_URL = "home"
 
-STATIC_ROOT = str(BASE_DIR) + '/static'
+STATIC_ROOT = str(BASE_DIR.parent) + '/static'
 
 CSRF_TRUSTED_ORIGINS = ['https://thinkandsoar.com', 'https://*.thinkandsoar.com']
