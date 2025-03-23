@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from .forms import UserSignUpForm
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 
 
 class MainPage(TemplateView):
@@ -63,3 +63,8 @@ def user_signup(request):
         form = UserSignUpForm()
 
     return render(request, "core/signup.html", {"form": form})
+
+
+def user_logout(request):
+    logout(request)
+    return redirect("main_page")
