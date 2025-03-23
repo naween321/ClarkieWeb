@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-f*(w3do=pg=kdi0y(+$wn*c^y(%)c(u)q&bnao6&$%p9e&h$oz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -107,3 +107,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = "main"
 LOGIN_REDIRECT_URL = "home"
+
+STATIC_ROOT = str(BASE_DIR.parent) + '/static'
+
+CSRF_TRUSTED_ORIGINS = ['https://thinkandsoar.com', 'https://*.thinkandsoar.com']
