@@ -86,7 +86,7 @@ def recent_questions(request):
 
 def clark_location(request):
     csv_file_path = os.path.join(settings.BASE_DIR, 'abbrev.csv')
-
+    query = request.GET.get('building_query')
     # List to store the CSV data
     questions = []
 
@@ -118,6 +118,11 @@ def clark_location(request):
                     'longitude': longitude  # New field
                 }
                 questions.append(question)
+        if query:
+            for question in questions:
+                temp = str(question)
+                if query in temp or query.lower() in temp or query.upper() in temp or query.title() in temp:
+                    return JsonResponse(question)
 
         # Return the data as JSON
         return JsonResponse(questions, safe=False)  # safe=False allows a list as the root object
