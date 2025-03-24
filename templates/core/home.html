@@ -25,7 +25,7 @@
             width: 100%;
         }
 
-        /* Left Sidebar */
+        /* Left Sidebar (unchanged) */
         .sidebar {
             width: 280px;
             background-color: #333;
@@ -253,7 +253,7 @@
             font-size: 0.9rem;
         }
 
-        /* Right Sidebar */
+        /* Right Sidebar (unchanged) */
         .sidebar-right {
             width: 280px;
             background-color: white;
@@ -277,41 +277,33 @@
             font-size: 0.9rem;
         }
 
-        /* Additional styles for question-answer functionality */
-        .answer-container {
-            display: none;
+        /* CHANGE: New styles for chat-like interface */
+        .chat-section {
+            flex: 1; /* Takes up remaining space */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between messages */
+            overflow-y: auto; /* Scrollable chat area */
+            margin-bottom: 20px;
+        }
+
+        .user-question {
+            max-width: 80%;
+            align-self: flex-end; /* Aligns user messages to the right */
+            background-color: #C8102E; /* Clarkie red for user questions */
+            color: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-response {
+            max-width: 80%;
+            align-self: flex-start; /* Aligns AI responses to the left */
             background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .answer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .answer-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .back-button {
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-        }
-
-        .answer-content {
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             line-height: 1.6;
             color: #444;
         }
@@ -319,7 +311,7 @@
 </head>
 <body>
 <div class="dashboard-container">
-    <!-- Left Sidebar -->
+    <!-- Left Sidebar (unchanged) -->
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="{% static 'core/logo.png' %}" alt="Clark University Logo" class="logo">
@@ -399,7 +391,7 @@
             </div>
         </div>
 
-        <!-- Questions Section - Will be hidden when showing answer -->
+        <!-- Questions Section -->
         <div class="questions-section" id="questionsSection">
             <h2>Popular Questions at Clark</h2>
 
@@ -489,22 +481,9 @@
             </div>
         </div>
 
-        <!-- Answer Section - Hidden by default, will be shown when a question is clicked -->
-        <div class="answer-container" id="answerContainer">
-            <div class="answer-header">
-                <h2 class="answer-title" id="answerTitle">Question Title</h2>
-                <button class="back-button" onclick="showQuestions()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    Back to questions
-                </button>
-            </div>
-            <div class="answer-content" id="answerContent">
-                Answer will appear here.
-            </div>
+        <!-- CHANGE: Replace answer-container with chat-section -->
+        <div class="chat-section" id="chatSection">
+            <!-- Messages will be appended here dynamically -->
         </div>
 
         <div class="chat-input-container">
@@ -513,7 +492,7 @@
         </div>
     </div>
 
-    <!-- Right Sidebar -->
+    <!-- Right Sidebar (unchanged) -->
     <div class="sidebar-right">
         <h2>Trending Search</h2>
         <ul class="trending-list">
@@ -527,57 +506,50 @@
     </div>
 </div>
 
-{#<script>#}
-{#    // Function to display an answer and hide the questions#}
-{#    function showAnswer(questionTitle, answerText) {#}
-{#        document.getElementById('questionsSection').style.display = 'none';#}
-{#        document.getElementById('answerContainer').style.display = 'block';#}
-{#        document.getElementById('answerTitle').textContent = questionTitle;#}
-{#        document.getElementById('answerContent').textContent = answerText;#}
-{#    }#}
-{##}
-{#    // Function to go back to questions#}
-{#    function showQuestions() {#}
-{#        document.getElementById('questionsSection').style.display = 'block';#}
-{#        document.getElementById('answerContainer').style.display = 'none';#}
-{#    }#}
-{##}
-{#    // Function for asking a new question#}
-{#    function askQuestion() {#}
-{#        const userQuestion = document.getElementById('userQuestion').value;#}
-{#        if (userQuestion.trim() !== '') {#}
-{#            // Default answer for any user question#}
-{#            showAnswer(userQuestion, 'Thank you for your question. Our team is working on providing the most accurate information for your query. This typically takes 24-48 hours. You\'ll receive a notification when an answer is available.');#}
-{#            document.getElementById('userQuestion').value = '';#}
-{#        }#}
-{#    }#}
-{#</script>#}
-
 <script>
-    function fromID(id){
-        let qs = document.getElementById(id).textContent
-        askQuestion(qs)
+    function fromID(id) {
+        let qs = document.getElementById(id).textContent;
+        askQuestion(qs);
     }
+
+    /* CHANGE: Update showAnswer to append messages instead of overwriting */
     function showAnswer(questionTitle, answerText) {
+        const chatSection = document.getElementById('chatSection');
+
+        // Hide questions section on first interaction
         document.getElementById('questionsSection').style.display = 'none';
-        document.getElementById('answerContainer').style.display = 'block';
-        document.getElementById('answerTitle').textContent = questionTitle;
-        document.getElementById('answerContent').textContent = answerText;
+
+        // Append user question
+        const userMessage = document.createElement('div');
+        userMessage.className = 'user-question';
+        userMessage.textContent = questionTitle;
+        chatSection.appendChild(userMessage);
+
+        // Append AI response
+        const aiMessage = document.createElement('div');
+        aiMessage.className = 'ai-response';
+        aiMessage.textContent = answerText;
+        chatSection.appendChild(aiMessage);
+
+        // Scroll to the bottom of the chat
+        chatSection.scrollTop = chatSection.scrollHeight;
     }
 
-    function showQuestions() {
-        document.getElementById('questionsSection').style.display = 'block';
-        document.getElementById('answerContainer').style.display = 'none';
-    }
+    /* CHANGE: Remove showQuestions as it's no longer needed (optional to keep if you want a back button) */
+    // function showQuestions() {
+    //     document.getElementById('questionsSection').style.display = 'block';
+    //     document.getElementById('answerContainer').style.display = 'none';
+    // }
 
-    function askQuestion(qs=null) {
-        let userQuestion
+    function askQuestion(qs = null) {
+        let userQuestion;
 
-        if (qs === null){
+        if (qs === null) {
             userQuestion = document.getElementById('userQuestion').value;
-        }else{
-            userQuestion = qs
+        } else {
+            userQuestion = qs;
         }
+
         if (userQuestion.trim() !== '') {
             fetch('/get-answer/', {
                 method: 'POST',
@@ -601,7 +573,7 @@
         }
     }
 
-    // Function to get CSRF token from cookies (needed for Django POST requests)
+    // Function to get CSRF token from cookies (unchanged)
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -617,6 +589,5 @@
         return cookieValue;
     }
 </script>
-
 </body>
 </html>
