@@ -395,7 +395,7 @@
             <h1 class="greeting">Good Afternoon, <span class="user-name">{{ request.user.first_name | title }}</span></h1>
             <div class="user-profile">
                 <img src="https://i.pravatar.cc/100?u=sara" alt="Sara Parker" class="profile-pic">
-                <span class="user-fullname">Sara Parker</span>
+                <span class="user-fullname">{{ request.user.first_name }} {{ request.user.last_name }}</span>
             </div>
         </div>
 
@@ -405,13 +405,13 @@
 
             <div class="question-card">
                 <div class="question-info">
-                    <h3>Finding Study Spaces on Campus</h3>
+                    <h3 id="spaces">Finding Study Spaces on Clark University</h3>
                     <div class="question-meta">
                         <span class="views">+10K</span>
                         <span>Conversation</span>
                     </div>
                 </div>
-                <button class="arrow-button" onclick="showAnswer('Finding Study Spaces on Campus', 'Clark University offers numerous study spaces across campus. The Goddard Library has individual study carrels, group study rooms, and quiet zones. The Academic Commons provides collaborative spaces. You can also find study areas in the University Center, Lasry Center for Bioscience, and most academic buildings. Many spaces are open 24/7 with your Clark ID card.')">
+                <button class="arrow-button" onclick="fromID('spaces')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -422,13 +422,13 @@
 
             <div class="question-card">
                 <div class="question-info">
-                    <h3>Financial Aid Application Deadlines</h3>
+                    <h3 id="finance">Financial Aid Application Deadlines in the Clark University</h3>
                     <div class="question-meta">
                         <span class="views">+10K</span>
                         <span>Conversation</span>
                     </div>
                 </div>
-                <button class="arrow-button" onclick="showAnswer('Financial Aid Application Deadlines', 'For Clark University, the priority deadline for submitting the FAFSA is February 1st for continuing students and January 15th for incoming freshmen. The CSS Profile deadline is also February 1st. Scholarship applications should be submitted by March 1st. Late applications are still accepted but may receive reduced funding consideration.')">
+                <button class="arrow-button" onclick="fromID('finance')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -439,13 +439,13 @@
 
             <div class="question-card">
                 <div class="question-info">
-                    <h3>Campus Dining Options and Hours</h3>
+                    <h3 id="dine">Clark University Dining Options and Hours</h3>
                     <div class="question-meta">
                         <span class="views">+10K</span>
                         <span>Conversation</span>
                     </div>
                 </div>
-                <button class="arrow-button" onclick="showAnswer('Campus Dining Options and Hours', 'Clark University offers several dining options: The Higgins Café (7:30am-8:00pm weekdays, 10:00am-7:00pm weekends), Bistro (11:00am-2:00pm weekdays), The Den (11:00am-12:00am daily), and Academic Commons Café (8:00am-4:00pm weekdays). Each location offers a variety of meal options from full entrées to grab-and-go items. Special dietary needs can be accommodated at all locations.')">
+                <button class="arrow-button" onclick="fromID('dine')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -456,13 +456,13 @@
 
             <div class="question-card">
                 <div class="question-info">
-                    <h3>Accessing Academic Advising Services</h3>
+                    <h3 id="advising">Accessing Academic Advising Services in the Clark University</h3>
                     <div class="question-meta">
                         <span class="views">+10K</span>
                         <span>Conversation</span>
                     </div>
                 </div>
-                <button class="arrow-button" onclick="showAnswer('Accessing Academic Advising Services', 'To access academic advising at Clark University, first contact your assigned faculty advisor via email to schedule an appointment. If you're unsure who your advisor is, check your ClarkYOU account or contact the Academic Advising Center (AAC) located in the Alumni Student Engagement Center, 3rd floor. The AAC offers walk-in hours Monday-Friday from 1-3pm and appointments through their online booking system.')">
+                <button class="arrow-button" onclick="fromID('advising')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -473,13 +473,13 @@
 
             <div class="question-card">
                 <div class="question-info">
-                    <h3>Course Registration Process Explained</h3>
+                    <h3 id="register">Clark University Course Registration Process Explained</h3>
                     <div class="question-meta">
                         <span class="views">+10K</span>
                         <span>Conversation</span>
                     </div>
                 </div>
-                <button class="arrow-button" onclick="showAnswer('Course Registration Process Explained', 'The Clark University course registration process occurs in several phases: 1) Check your registration time slot on ClarkYOU, 2) Meet with your academic advisor to discuss course choices and get your PIN, 3) Create a planned schedule with alternatives in case your first choices are full, 4) Register online through ClarkYOU when your time slot opens, 5) During add/drop period, you can make changes through the first two weeks of the semester. Registration typically opens in November for spring courses and in April for fall courses.')">
+                <button class="arrow-button" onclick="fromID('register')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -554,6 +554,10 @@
 {#</script>#}
 
 <script>
+    function fromID(id){
+        let qs = document.getElementById(id).textContent
+        askQuestion(qs)
+    }
     function showAnswer(questionTitle, answerText) {
         document.getElementById('questionsSection').style.display = 'none';
         document.getElementById('answerContainer').style.display = 'block';
@@ -566,8 +570,14 @@
         document.getElementById('answerContainer').style.display = 'none';
     }
 
-    function askQuestion() {
-        const userQuestion = document.getElementById('userQuestion').value;
+    function askQuestion(qs=null) {
+        let userQuestion
+
+        if (qs === null){
+            userQuestion = document.getElementById('userQuestion').value;
+        }else{
+            userQuestion = qs
+        }
         if (userQuestion.trim() !== '') {
             fetch('/get-answer/', {
                 method: 'POST',
