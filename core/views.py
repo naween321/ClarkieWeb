@@ -85,7 +85,7 @@ def recent_questions(request):
 
 
 def clark_location(request):
-    csv_file_path = os.path.join(settings.BASE_DIR, 'clark_maps.csv')
+    csv_file_path = os.path.join(settings.BASE_DIR, 'abbrev.csv')
 
     # List to store the CSV data
     questions = []
