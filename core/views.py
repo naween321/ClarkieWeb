@@ -1,3 +1,6 @@
+import csv
+import os
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
@@ -9,6 +12,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.http import JsonResponse
 from .models import QuestionAnswer
+from django.conf import settings
 
 
 class MainPage(TemplateView):
@@ -78,3 +82,47 @@ def recent_questions(request):
     for question in questions:
         response.append({"title": question.question})
     return JsonResponse(response, safe=False)
+
+
+def clark_location(request):
+    csv_file_path = os.path.join(settings.BASE_DIR, 'clark_maps.csv')
+
+    # List to store the CSV data
+    questions = []
+
+    try:
+        with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            # Ensure the required columns exist
+            required_columns = {'id', 'link', 'title', 'excerpt', 'featured_image_url', 'coordinates'}
+            if not required_columns.issubset(reader.fieldnames):
+                return JsonResponse({'error': 'CSV file is missing required columns'}, status=400)
+
+            # Iterate through each row and append to the list
+            for row in reader:
+                # Split coordinates into latitude and longitude
+                try:
+                    latitude, longitude = row['coordinates'].split(',')
+                    latitude = float(latitude.strip())  # Convert to float and remove extra whitespace
+                    longitude = float(longitude.strip())
+                except (ValueError, IndexError):
+                    return JsonResponse({'error': f"Invalid coordinates format in row with id {row['id']}"}, status=400)
+
+                question = {
+                    'id': row['id'],
+                    'link': row['link'],
+                    'title': row['title'],
+                    'excerpt': row['excerpt'],
+                    'featured_image_url': row['featured_image_url'],
+                    'latitude': latitude,  # New field
+                    'longitude': longitude  # New field
+                }
+                questions.append(question)
+
+        # Return the data as JSON
+        return JsonResponse(questions, safe=False)  # safe=False allows a list as the root object
+
+    except FileNotFoundError:
+        return JsonResponse({'error': 'CSV file not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

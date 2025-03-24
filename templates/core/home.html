@@ -307,6 +307,17 @@
             line-height: 1.6;
             color: #444;
         }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            padding: 10px 0;
+            font-size: 1rem;
+            outline: none;
+            resize: none; /* Prevents manual resizing */
+            overflow: auto; /* Scrolls if content exceeds height */
+            min-height: 20px; /* Adjust as needed */
+        }
     </style>
 </head>
 <body>
@@ -375,7 +386,8 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="header-section">
-            <h1 class="greeting">Good Afternoon, <span class="user-name">{{ request.user.first_name | title }}</span></h1>
+            <h1 class="greeting">Good Afternoon, <span class="user-name">{{ request.user.first_name | title }}</span>
+            </h1>
             <div class="user-profile">
                 <img src="https://i.pravatar.cc/100?u=sara" alt="Sara Parker" class="profile-pic">
                 <span class="user-fullname">{{ request.user.first_name }} {{ request.user.last_name }}</span>
@@ -478,8 +490,9 @@
         </div>
 
         <div class="chat-input-container">
-            <input type="text" placeholder="Ask Clarkie Anything About Clark" class="chat-input" id="userQuestion">
-            <button class="chat-button" onclick="askQuestion()">Send</button>
+            <textarea placeholder="Ask Clarkie Anything About Clark" class="chat-input" id="userQuestion" rows="1">
+            </textarea>
+            <button class="chat-button" id="sendButton">Send</button>
         </div>
     </div>
 
@@ -503,34 +516,41 @@
         askQuestion(qs);
     }
 
-    /* CHANGE: Update showAnswer to append messages instead of overwriting */
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('userQuestion');
+        const sendButton = document.getElementById('sendButton');
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                askQuestion();
+            } else if (event.shiftKey && event.key === 'Enter') {
+                event.preventDefault();
+                input.value += '\n';
+            }
+        });
+        sendButton.addEventListener('click', () => {
+            askQuestion();
+        });
+    });
+
     function showAnswer(questionTitle, answerText) {
         const chatSection = document.getElementById('chatSection');
 
-        // Hide questions section on first interaction
         document.getElementById('questionsSection').style.display = 'none';
 
-        // Append user question
         const userMessage = document.createElement('div');
         userMessage.className = 'user-question';
         userMessage.textContent = questionTitle;
         chatSection.appendChild(userMessage);
 
-        // Append AI response
         const aiMessage = document.createElement('div');
         aiMessage.className = 'ai-response';
         aiMessage.textContent = answerText;
         chatSection.appendChild(aiMessage);
 
-        // Scroll to the bottom of the chat
         chatSection.scrollTop = chatSection.scrollHeight;
     }
-
-    /* CHANGE: Remove showQuestions as it's no longer needed (optional to keep if you want a back button) */
-    // function showQuestions() {
-    //     document.getElementById('questionsSection').style.display = 'block';
-    //     document.getElementById('answerContainer').style.display = 'none';
-    // }
 
     function askQuestion(qs = null) {
         let userQuestion;
@@ -548,17 +568,17 @@
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken') // CSRF protection
                 },
-                body: JSON.stringify({ question: userQuestion })
+                body: JSON.stringify({question: userQuestion})
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    showAnswer(data.question, data.answer);
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        showAnswer(data.question, data.answer);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
 
             document.getElementById('userQuestion').value = '';
         }
@@ -572,28 +592,27 @@
                 'X-CSRFToken': getCookie('csrftoken') // If your API requires CSRF protection
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const questionList = document.getElementById('recentQuestionsList');
-            questionList.innerHTML = ''; // Clear any existing items
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const questionList = document.getElementById('recentQuestionsList');
+                questionList.innerHTML = ''; // Clear any existing items
 
-            // Assuming the API returns an array of question strings or objects
-            data.forEach(question => {
-                const li = document.createElement('li');
-                li.textContent = typeof question === 'string' ? question : question.title; // Adjust based on API response structure
-                questionList.appendChild(li);
+                // Assuming the API returns an array of question strings or objects
+                data.forEach(question => {
+                    const li = document.createElement('li');
+                    li.textContent = typeof question === 'string' ? question : question.title; // Adjust based on API response structure
+                    questionList.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching recent questions:', error);
+                document.getElementById('recentQuestionsList').innerHTML = '<li>No recent questions</li>';
             });
-        })
-        .catch(error => {
-            console.error('Error fetching recent questions:', error);
-            // Optionally display a fallback message
-            document.getElementById('recentQuestionsList').innerHTML = '<li>No recent questions</li>';
-        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
