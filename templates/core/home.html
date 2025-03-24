@@ -527,8 +527,33 @@
     </div>
 </div>
 
+{#<script>#}
+{#    // Function to display an answer and hide the questions#}
+{#    function showAnswer(questionTitle, answerText) {#}
+{#        document.getElementById('questionsSection').style.display = 'none';#}
+{#        document.getElementById('answerContainer').style.display = 'block';#}
+{#        document.getElementById('answerTitle').textContent = questionTitle;#}
+{#        document.getElementById('answerContent').textContent = answerText;#}
+{#    }#}
+{##}
+{#    // Function to go back to questions#}
+{#    function showQuestions() {#}
+{#        document.getElementById('questionsSection').style.display = 'block';#}
+{#        document.getElementById('answerContainer').style.display = 'none';#}
+{#    }#}
+{##}
+{#    // Function for asking a new question#}
+{#    function askQuestion() {#}
+{#        const userQuestion = document.getElementById('userQuestion').value;#}
+{#        if (userQuestion.trim() !== '') {#}
+{#            // Default answer for any user question#}
+{#            showAnswer(userQuestion, 'Thank you for your question. Our team is working on providing the most accurate information for your query. This typically takes 24-48 hours. You\'ll receive a notification when an answer is available.');#}
+{#            document.getElementById('userQuestion').value = '';#}
+{#        }#}
+{#    }#}
+{#</script>#}
+
 <script>
-    // Function to display an answer and hide the questions
     function showAnswer(questionTitle, answerText) {
         document.getElementById('questionsSection').style.display = 'none';
         document.getElementById('answerContainer').style.display = 'block';
@@ -536,21 +561,52 @@
         document.getElementById('answerContent').textContent = answerText;
     }
 
-    // Function to go back to questions
     function showQuestions() {
         document.getElementById('questionsSection').style.display = 'block';
         document.getElementById('answerContainer').style.display = 'none';
     }
 
-    // Function for asking a new question
     function askQuestion() {
         const userQuestion = document.getElementById('userQuestion').value;
         if (userQuestion.trim() !== '') {
-            // Default answer for any user question
-            showAnswer(userQuestion, 'Thank you for your question. Our team is working on providing the most accurate information for your query. This typically takes 24-48 hours. You\'ll receive a notification when an answer is available.');
+            fetch('/get-answer/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // CSRF protection
+                },
+                body: JSON.stringify({ question: userQuestion })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    showAnswer(data.question, data.answer);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
             document.getElementById('userQuestion').value = '';
         }
     }
+
+    // Function to get CSRF token from cookies (needed for Django POST requests)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
+
 </body>
 </html>
