@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .utils import detect_intent_cx
+from core.models import QuestionAnswer
 import json
 
 
@@ -16,7 +17,7 @@ def get_answer(request):
 
             # Call the function
             answer = detect_intent_cx(user_question)
-
+            QuestionAnswer.objects.create(question=user_question, answer=answer)
             return JsonResponse({"question": user_question, "answer": answer})
 
         except json.JSONDecodeError:

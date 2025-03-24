@@ -7,6 +7,8 @@ from django.urls import reverse_lazy
 from .forms import UserSignUpForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
+from django.http import JsonResponse
+from .models import QuestionAnswer
 
 
 class MainPage(TemplateView):
@@ -68,3 +70,11 @@ def user_signup(request):
 def user_logout(request):
     logout(request)
     return redirect("main_page")
+
+
+def recent_questions(request):
+    questions = QuestionAnswer.objects.all().order_by('-created_at')
+    response = []
+    for question in questions:
+        response.append({"title": question.question})
+    return JsonResponse(response, safe=False)

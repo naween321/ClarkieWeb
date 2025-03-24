@@ -347,16 +347,7 @@
 
         <div class="recent-questions">
             <h3>Recent Questions</h3>
-            <ul class="question-list">
-                <li>Spring 2023 registration deadline</li>
-                <li>How to apply for on-campus housing</li>
-                <li>Clark library hours today</li>
-                <li>Academic advising appointment</li>
-                <li>Financial aid office location</li>
-                <li>Campus dining menu this week</li>
-                <li>Psychology major requirements</li>
-                <li>Parking permit application</li>
-                <li>Student health services hours</li>
+            <ul class="question-list" id="recentQuestionsList">
             </ul>
         </div>
 
@@ -572,6 +563,42 @@
             document.getElementById('userQuestion').value = '';
         }
     }
+
+    function fetchRecentQuestions() {
+        fetch('/recent-questions/', {  // Replace with your actual API endpoint
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // If your API requires CSRF protection
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const questionList = document.getElementById('recentQuestionsList');
+            questionList.innerHTML = ''; // Clear any existing items
+
+            // Assuming the API returns an array of question strings or objects
+            data.forEach(question => {
+                const li = document.createElement('li');
+                li.textContent = typeof question === 'string' ? question : question.title; // Adjust based on API response structure
+                questionList.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching recent questions:', error);
+            // Optionally display a fallback message
+            document.getElementById('recentQuestionsList').innerHTML = '<li>No recent questions</li>';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchRecentQuestions();
+    });
 
     // Function to get CSRF token from cookies (unchanged)
     function getCookie(name) {
